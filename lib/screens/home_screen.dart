@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:we_chat/api/apis_database.dart';
 
 import '../api/apis.dart';
 import '../helper/dialogs.dart';
@@ -132,7 +133,110 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
 
           //body
-          body: StreamBuilder(
+
+            body: StreamBuilder<List<ChatUser>>(
+              stream:APIsDatabase.getAllUsers(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return const Center(
+                    child: Text('Error occurred!', style: TextStyle(fontSize: 20)),
+                  );
+                } else if (snapshot.hasData) {
+                  final data = snapshot.data;
+                  if (data != null && data.isNotEmpty) {
+                    return ListView.builder(
+                      itemCount: data.length,
+                      itemBuilder: (context, index) {
+                        return ChatUserCard(user: data[index]);
+                      },
+                    );
+                  } else {
+                    return const Center(
+                      child: Text('No Connections Found!', style: TextStyle(fontSize: 20)),
+                    );
+                  }
+                } else {
+                  return const Center(
+                    child: Text('No data received from Firebase.', style: TextStyle(fontSize: 20)),
+                  );
+                }
+              },
+            )
+
+
+          /*body: StreamBuilder<List<ChatUser>>(
+            stream: APIsDatabase.getAllUsers(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                final data = snapshot.data;
+                print('Data received from Firebase: $data');
+                if (data != null && data.isNotEmpty) {
+                  return ListView.builder(
+                    itemCount: data.length,
+                    itemBuilder: (context, index) {
+                      return ChatUserCard(user: data[index]);
+                    },
+                  );
+                } else {
+                  return const Center(
+                    child: Text('No Connections Found!', style: TextStyle(fontSize: 20)),
+                  );
+                }
+              } else if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else {
+                return const Center(
+                  child: Text('Error occurred!', style: TextStyle(fontSize: 20)),
+                );
+              }
+            },
+          )*/,
+          /*body: StreamBuilder<List<ChatUser>>(
+            stream: APIsDatabase.getAllUsers(),
+
+            //get only those user, who's ids are provided
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                print('Data received from Firebase: ${snapshot.data}');
+              } else {
+                print('No data received from Firebase.');
+              }
+              switch (snapshot.connectionState) {
+              //if data is loading
+                case ConnectionState.waiting:
+                case ConnectionState.none:
+                return const Center(
+                    child: CircularProgressIndicator());
+
+                //if some or all data is loaded then show it
+                case ConnectionState.active:
+                case ConnectionState.done:
+                final data = snapshot.data;
+                  *//*_list =
+                      data?.map((e) => ChatUser.fromJson(e.data())).toList() ??
+                          [];*//*
+
+                if (data != null && data.isNotEmpty) {
+                  debugPrint("list_data: ${data.length}");
+                  return ListView.builder(
+                    itemCount: data.length,
+                    itemBuilder: (context, index) {
+                      return ChatUserCard(user: data[index]);
+                    },
+                  );
+                }else {
+                    return const Center(
+                      child: Text('No Connections Found!',
+                          style: TextStyle(fontSize: 20)),
+                    );
+                  }
+              }
+            },
+          ),*/
+
+          /* body: StreamBuilder(
             stream: APIs.getMyUsersId(),
 
             //get id of only known users
@@ -192,7 +296,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   );
               }
             },
-          ),
+          ),*/
         ),
       ),
     );

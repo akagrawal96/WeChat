@@ -8,6 +8,7 @@ import '../main.dart';
 import '../models/chat_user.dart';
 import '../models/message.dart';
 import '../screens/chat_screen.dart';
+import '../screens/chat_screen_database.dart';
 import 'dialogs/profile_dialog.dart';
 
 //card to represent a single user in home screen
@@ -37,7 +38,7 @@ class _ChatUserCardState extends State<ChatUserCard> {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (_) => ChatScreen(user: widget.user)));
+                    builder: (_) => ChatScreenRealtime(user: widget.user)));
           },
           child: StreamBuilder(
             stream: APIs.getLastMessage(widget.user),
